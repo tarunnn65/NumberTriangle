@@ -1,4 +1,7 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is the provided NumberTriangle class to be used in this coding task.
@@ -88,7 +91,17 @@ public class NumberTriangle {
      *
      */
     public int retrieve(String path) {
-        // TODO implement this method
+        if (path.equals("")) {
+            return this.root;
+        }
+
+        else if (path.substring(0, 1).equals("l")) {
+            return left.retrieve(path.substring(1));
+        }
+
+        else if (path.substring(0,1).equals("r")) {
+            return right.retrieve(path.substring(1));
+        }
         return -1;
     }
 
@@ -110,23 +123,38 @@ public class NumberTriangle {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
 
-        // TODO define any variables that you want to use to store things
 
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
-        NumberTriangle top = null;
+        NumberTriangle top = new NumberTriangle(0);
+        List<List<NumberTriangle>> rows = new ArrayList<>();
 
         String line = br.readLine();
         while (line != null) {
 
             // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
 
-            // TODO process the line
 
+            List<NumberTriangle> row = new ArrayList<>();
+            String[] Values = line.split(" ");
+            for(String val : Values) {
+                row.add(new NumberTriangle(Integer.parseInt(val)));
+            }
+            rows.add(row);
             //read the next line
             line = br.readLine();
         }
+        for (int r = 0; r < rows.size() - 1; r++) {
+            List<NumberTriangle> current = rows.get(r);
+            List<NumberTriangle> next = rows.get(r + 1);
+            for (int i = 0; i < current.size(); i++) {
+                current.get(i).setLeft(next.get(i));
+                current.get(i).setRight(next.get(i + 1));
+            }
+        }
+        top.root = rows.get(0).get(0).root;
+        top.setLeft(rows.get(1).get(0));
+        top.setRight(rows.get(1).get(1));
         br.close();
         return top;
     }
